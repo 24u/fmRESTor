@@ -1,0 +1,9 @@
+FULL Access:
+Database: fmRESTor
+Username: fmRESTor
+Password: 24ufmrestor
+
+Data API:
+Database: fmRESTor
+Username: api
+Password: api123456

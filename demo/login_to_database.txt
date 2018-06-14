@@ -1,9 +1,21 @@
-FULL Access:
-Database: fmRESTor
-Username: fmRESTor
-Password: 24ufmrestor
+Main Database:
+    FULL Access:
+        Database: fmRESTor
+        Username: fmRESTor
+        Password: 24ufmrestor
 
-Data API:
-Database: fmRESTor
-Username: api
-Password: api123456
+    Data API:
+        Database: fmRESTor
+        Username: api
+        Password: api123456
+
+Secondary Database (External Data Source):
+    FULL Access:
+        Database: fmRESTorBUDY
+        Username: fmRESTorBUDY
+        Password: 24ufmrestorbudy
+
+    Data API:
+        Database: fmRESTorBUDY
+        Username: budy
+        Password: budy123456

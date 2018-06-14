@@ -13,6 +13,7 @@ class fmRESTor
     private $layout;
     private $user;
     private $password;
+    private $fmDateSource;
 
     /* --- Define another attributes --- */
     private $token;
@@ -45,13 +46,14 @@ class fmRESTor
      * @option array $fmDataSource
      * @option array $options
      */
-    public function __construct($host, $db, $layout, $user, $password, $options = null)
+    public function __construct($host, $db, $layout, $user, $password, $options = null, $fmDataSource = null)
     {
         $this->host = $host;
         $this->db = $db;
         $this->layout = $layout;
         $this->user = $user;
         $this->password = $password;
+        $this->fmDateSource = $fmDataSource;
         if ($options !== null) {
             $this->setOptions($options);
         }
@@ -983,7 +985,16 @@ class fmRESTor
             )
         );
 
-        $result = $this->callURL($request);
+        $param = "";
+        if ($this->fmDateSource !== null) {
+            $prepareParam = array(
+                "fmDataSource" => $this->fmDateSource
+            );
+
+            $param = $this->convertParametersToJson($prepareParam);
+        }
+
+        $result = $this->callURL($request,$param);
 
         if (is_array($result)) {
             $response = $result["response"];

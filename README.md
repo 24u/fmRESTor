@@ -12,7 +12,13 @@ We will greatly appreciate your contributions, although we cannot provide free s
 Features
 -
 
-* fmRESTor contains debug logging
+* One object class conveniently handles everything
+* Automatically generates authentication token
+* Re-uses existing token to avoid unnecessary additional connections
+* Automatically re-generates expired token
+* Handles exceptions and provides meaningful error results
+* Can handle raw form data for easier container uploads
+* Provides customizable debug logging
 
 Requirements
 -
@@ -31,7 +37,7 @@ Include downloaded library file to your project and create new class instance.
 session_start();
 require_once __DIR__ . '/fmRESTor.php';
 
-$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options);
+$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options, $fmDataSource);
 ~~~
 
 ### _Instance parameters_:
@@ -45,6 +51,7 @@ $layout  | string  | yes | Database layout name to work on
 $user | string  | yes | User login to database
 $password | string  | yes | User password to database
 $options  | array  | optional | Additional library configuration
+$fmDataSource | array  | optional | Login to an external data source
 
 ### _Options parameters:_
 
@@ -69,7 +76,15 @@ $options = array(
 	"allowInsecure" => true 
 );
 
-$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options);
+$fmDataSource = array(
+    array(
+        "database" => "fmRESTorBUDY",
+        "username" => "budy",
+        "password" => "budy123456"
+    )
+);
+
+$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options, $fmDataSource);
 ~~~
 
 Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/](http://fmhelp.filemaker.com/docs/17/en/dataapi/)
@@ -405,9 +420,7 @@ Examples
 -
 The examples for each method are available inside the folder "demo".
 
-TODO
--
-External Data Source
+
 
 License
 -

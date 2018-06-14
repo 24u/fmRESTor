@@ -135,9 +135,7 @@ $parameters = array(
     )
 );
 
-$recordID = 4;
-
-$fm->createRecord($recordID, $parameters);
+$fm->createRecord($parameters);
 ~~~
 
 ___

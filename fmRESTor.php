@@ -37,7 +37,7 @@ class fmRESTor
     const LS_WARNING = "warning";
 
     /**
-     * FilemakerAPI constructor.
+     * fmRESTor constructor.
      * @param string $host
      * @param string $db
      * @param string $layout

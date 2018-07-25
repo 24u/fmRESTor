@@ -37,7 +37,7 @@ Include downloaded library file to your project and create new class instance.
 session_start();
 require_once __DIR__ . '/fmRESTor.php';
 
-$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options, $fmDataSource);
+$fm = new fmRESTor($host, $database, $layout, $user, $password, $options, $fmDataSource);
 ~~~
 
 ### _Instance parameters_:
@@ -84,10 +84,8 @@ $fmDataSource = array(
     )
 );
 
-$fm = new FilemakerAPI($host, $database, $layout, $user, $password, $options, $fmDataSource);
+$fm = new fmRESTor($host, $database, $layout, $user, $password, $options, $fmDataSource);
 ~~~
-
-Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/](http://fmhelp.filemaker.com/docs/17/en/dataapi/)
 
 Methods
 -
@@ -138,6 +136,7 @@ $parameters = array(
 $fm->createRecord($parameters);
 ~~~
 
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_create-record](http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_create-record)
 ___
 
 ### _deleteRecord:_
@@ -169,7 +168,7 @@ $recordID = 4;
 
 $fm->deleteRecord($recordID, $parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_delete-record](http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_delete-record)
 ___
 
 ### _editRecord:_
@@ -200,7 +199,7 @@ $recordID = 4;
 
 $fm->editRecord($recordID, $parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_edit-record](http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_edit-record)
 ___
 
 ### _getRecord:_
@@ -235,7 +234,7 @@ $recordID = 4;
 
 $fm->getRecord($recordID, $parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_get-records](http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_get-records)
 ___
 
 ### _getRecords:_
@@ -259,7 +258,7 @@ $parameters = array(
 
 $fm->getRecords($parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_get-records](http://fmhelp.filemaker.com/docs/17/en/dataapi/#work-with-records_get-records)
 ___
 
 ### _uploadFormDataToContainter:_
@@ -347,7 +346,7 @@ $parameters = array(
 
 $fm->findRecords($parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#perform-a-find-request](http://fmhelp.filemaker.com/docs/17/en/dataapi/#perform-a-find-request)
 ___
 
 ### _setGlobalField:_
@@ -374,7 +373,7 @@ $parameters = array(
 
 $fm->setGlobalField($parameters);
 ~~~
-
+Complete list of optional parameters is available at [http://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields](http://fmhelp.filemaker.com/docs/17/en/dataapi/#set-global-fields)
 ___
 
 ### _setFileMakerLayout_

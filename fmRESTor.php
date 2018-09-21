@@ -152,7 +152,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/sessions/" . $this->token,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/sessions/" . urlencode($this->token),
             "method" => "DELETE",
         );
 
@@ -217,7 +217,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records",
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records",
             "method" => "POST",
             "headers" => array(
                 "Content-Type: application/json",
@@ -288,7 +288,7 @@ class fmRESTor
 
         $param = $this->convertParametersToString($parameters);
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . $id . "?" . $param,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . $id . "?" . $param,
             "method" => "DELETE",
             "headers" => array(
                 "Authorization: Bearer " . $this->token
@@ -357,7 +357,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . $id,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . $id,
             "method" => "PATCH",
             "headers" => array(
                 "Content-Type: application/json",
@@ -431,7 +431,7 @@ class fmRESTor
             $param = $this->convertParametersToString($parameters);
         }
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . $id . "?" . $param,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . $id . "?" . $param,
             "method" => "GET",
             "headers" => array(
                 "Authorization: Bearer " . $this->token
@@ -504,7 +504,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . "?" . $param,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . "?" . $param,
             "method" => "GET",
             "headers" => array(
                 "Authorization: Bearer " . $this->token
@@ -579,7 +579,7 @@ class fmRESTor
         );
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . $id . "/containers/" . $containerFieldName . "/" . $containerFieldRepetition,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . $id . "/containers/" . $containerFieldName . "/" . $containerFieldRepetition,
             "method" => "POST",
             "headers" => array(
                 'Content-Type: multipart/form-data',
@@ -659,7 +659,7 @@ class fmRESTor
         );
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/records/" . $id . "/containers/" . $containerFieldName . "/" . $containerFieldRepetition,
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/records/" . $id . "/containers/" . $containerFieldName . "/" . $containerFieldRepetition,
             "method" => "POST",
             "headers" => array(
                 'Content-Type: multipart/form-data',
@@ -727,7 +727,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/layouts/" . $this->layout . "/_find",
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/layouts/" . urlencode($this->layout) . "/_find",
             "method" => "POST",
             "headers" => array(
                 "Content-Type: application/json",
@@ -797,7 +797,7 @@ class fmRESTor
         }
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/globals/",
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/globals/",
             "method" => "PATCH",
             "headers" => array(
                 "Content-Type: application/json",
@@ -977,7 +977,7 @@ class fmRESTor
         ));
 
         $request = array(
-            "url" => "/fmi/data/v1/databases/" . $this->db . "/sessions",
+            "url" => "/fmi/data/v1/databases/" . urlencode($this->db) . "/sessions",
             "method" => "POST",
             "headers" => array(
                 "Content-Type: application/json",

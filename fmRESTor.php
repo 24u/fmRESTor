@@ -57,6 +57,8 @@ class fmRESTor
         if ($options !== null) {
             $this->setOptions($options);
         }
+
+        $this->setTimezone();
     }
 
     private function setLogRowNumber()
@@ -122,6 +124,15 @@ class fmRESTor
             } else {
                 $this->response(-105);
             }
+        }
+    }
+
+    /**
+     * Check if is set default timezone in PHP.ini
+     */
+    private function setTimezone(){
+        if(ini_get('date.timezone') == ""){
+            ini_set('date.timezone', 'Europe/London');
         }
     }
 

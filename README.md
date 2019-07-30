@@ -111,13 +111,14 @@ Close current session in the FileMaker database.
 public function logout()
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->logout();
 ~~~
 
 </details>
+
 ___
 
 ### _getProductInformation:_
@@ -134,7 +135,7 @@ public function getProductInformation()
 ~~~
 
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->getProductInformation();
@@ -142,7 +143,7 @@ $fm->getProductInformation();
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -196,7 +197,7 @@ Returns array of names of all databases hosted and enabled for access via FileMa
 public function getDatabaseNames()
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->getDatabaseNames();
@@ -204,7 +205,7 @@ $fm->getDatabaseNames();
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -251,7 +252,7 @@ Returns array of names of all available scripts for given database.
 public function getScriptNames()
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->getScriptNames();
@@ -259,7 +260,7 @@ $fm->getScriptNames();
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -308,14 +309,14 @@ Returns array of names of all available layouts for given database.
 public function getLayoutNames()
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->getLayoutNames();
 ~~~
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -407,7 +408,7 @@ Returns useful information about specific layout, including fields on the layout
 public function getLayoutMetadata()
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->getLayoutMetadata();
@@ -415,7 +416,7 @@ $fm->getLayoutMetadata();
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1115,7 +1116,7 @@ Create a record in the primary table of the current fmRESTor instance context.
 public function createRecord($parameters)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1133,7 +1134,7 @@ $fm->createRecord($parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1179,7 +1180,7 @@ public function deleteRecord($id, $parameters = null)
 ~~~
 
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1198,7 +1199,7 @@ $fm->deleteRecord($recordID, $parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1239,7 +1240,7 @@ Duplicate a record, specified by ID, found in the primary table of the current f
 public function duplicateRecord($id, $parameters = null)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1258,7 +1259,7 @@ $response = $fm->duplicateRecord($recordId, $parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1315,7 +1316,7 @@ Update a record of given ID from the primary table of the current fmRESTor insta
 public function editRecord($id, $parameters)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1333,7 +1334,7 @@ $fm->editRecord($recordID, $parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1378,7 +1379,7 @@ Get a record of given ID from the primary table of the current fmRESTor instance
 public function getRecord($id, $parameters = null)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1400,7 +1401,7 @@ $fm->getRecord($recordID, $parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -1532,7 +1533,7 @@ Get multiple records from the primary table of the current fmRESTor instance con
 public function getRecords($parameters = null)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -1544,7 +1545,7 @@ $fm->getRecords($parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -2020,7 +2021,7 @@ Upload form data and store into container field.
 public function uploadFormDataToContainter($id, $containerFieldName, $containerFieldRepetition, $file)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $recordID = 4;
@@ -2033,7 +2034,7 @@ $fm->uploadFormDataToContainter($recordID, $containerFieldName, $containerFieldR
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -2095,7 +2096,7 @@ Upload file and store into container field.
 public function uploadFileToContainter($id, $containerFieldName, $containerFieldRepetition, $path)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $recordID = 4;
@@ -2108,7 +2109,7 @@ $fm->uploadFileToContainter($recordID, $containerFieldName, $containerFieldRepet
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -2148,7 +2149,7 @@ Returns a set of records from the primary table of the current fmRESTor instance
 public function findRecords($parameters)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -2168,7 +2169,7 @@ $fm->findRecords($parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -4209,7 +4210,7 @@ Sets the values for global fields specified in its parameter.
 public function setGlobalField($parameters)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $parameters = array(
@@ -4224,7 +4225,7 @@ $fm->setGlobalField($parameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -4267,7 +4268,7 @@ Simply run a script in the given database without performing any other actions.
 public function runScript($scriptName, $scriptPrameters = null)
 ~~~
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $scriptParameters = [
@@ -4281,7 +4282,7 @@ $response = $fm->runScript($scriptName, $scriptParameters);
 
 </details>
 
-<details><summary>**Sample Response**</summary>
+<details><summary>Sample Response</summary>
 
 ~~~php
 array(2) {
@@ -4325,7 +4326,7 @@ Navigates to a database layout specified by its name.
 public function setFilemakerLayout($layout)
 ~~~     
 
-<details><summary>**Usage**</summary>
+<details><summary>Usage</summary>
 
 ~~~php
 $fm->setFilemakerLayout("Layout_name");

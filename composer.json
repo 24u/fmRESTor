@@ -1,0 +1,7 @@
+{
+  "name": "24U/fmRESTor",
+  "description": "fmRESTor is an object-based PHP library developed to seamlessly interact with databases and custom apps hosted on a FileMaker Server via the new powerful FileMaker Data API from within a PHP code.",
+  "require": {
+    "php": "^5.6"
+  }
+}

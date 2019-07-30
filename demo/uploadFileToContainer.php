@@ -1,30 +1,20 @@
 <?php
 
-// Upload File to Container with all parameters
+use fmRESTor\fmRESTor;
 session_start();
 require_once dirname(__DIR__) . '/fmRESTor.php';
 
-$fm = new fmRESTor("127.0.0.1", "fmRESTor", "php_user", "api", "api123456",array("allowInsecure" => true));
+$fm = new fmRESTor("127.0.0.1", "fmRESTor", "php_user", "api", "api123456", array("allowInsecure" => true));
 
-// Create new record
+// These steps are for preparation only
 $newRecord = array(
     "fieldData" => array(
-        "surname" => "Upload File Name",
-        "email" => "email@email.com",
-        "birthday" => "1.1.2001",
-        "personal_identification_number" => "99",
-        "address" => "Street 24, City"
+        "surname" => "King",
+        "email" => "king@tempor.net",
+        "birthday" => "02.09.2020",
+        "personal_identification_number" => "235",
+        "address" => "7182 Morbi Road, Hisar 5230"
     ),
-    "portalData" => array(
-        "USER_licence" => array(
-            array(
-                "USER_licence::product_name" => "product01",
-                "USER_licence::key" => "key01",
-                "USER_licence::version" => "ver01",
-                "USER_licence::date_of_expiration" => "1.1.2024"
-            )
-        )
-    )
 );
 
 $response = $fm->createRecord($newRecord);
@@ -32,6 +22,7 @@ $response = $fm->createRecord($newRecord);
 // This is ID the record that was made and the file be set there
 $id = $response["response"]["recordId"];
 
+// Upload the file
 $response2 = $fm->uploadFileToContainter($id, "photo", 1, __DIR__ . "/24uSoftware.jpg");
 var_dump($response, $response2);
 exit();

@@ -4,10 +4,9 @@ use fmRESTor\fmRESTor;
 session_start();
 require_once dirname(__DIR__) . '/fmRESTor.php';
 
-// Connect to the server
 $fm = new fmRESTor("127.0.0.1", "fmRESTor", "php_user", "api", "api123456", array("allowInsecure" => true));
 
-// Logout from the server
-$response = $fm->logout();
+// Get all avaiable layouts names for given database
+$response = $fm->getLayoutNames();
 var_dump($response);
 exit();

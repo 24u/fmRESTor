@@ -11,11 +11,11 @@ Main Database:
 
 Secondary Database (External Data Source):
     FULL Access:
-        Database: fmRESTorBUDY
-        Username: fmRESTorBUDY
-        Password: 24ufmrestorbudy
+        Database: fmRESTorEXTERNAL
+        Username: fmRESTorEXTERNAL
+        Password: 24ufmrestorexternal
 
     Data API:
-        Database: fmRESTorBUDY
-        Username: budy
-        Password: budy123456
+        Database: fmRESTorEXTERNAL
+        Username: external
+        Password: external123456

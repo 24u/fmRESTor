@@ -1,33 +1,33 @@
 <?php
 
-// Edit record with all optional parameters
+use fmRESTor\fmRESTor;
 session_start();
 require_once dirname(__DIR__) . '/fmRESTor.php';
 
-$fm = new fmRESTor("127.0.0.1", "fmRESTor", "php_user", "api", "api123456",array("allowInsecure" => true));
+$fm = new fmRESTor("127.0.0.1", "fmRESTor", "php_user", "api", "api123456", array("allowInsecure" => true));
 
-// Create new record
+// These steps are for preparation only
 $newRecord = array(
     "fieldData" => array(
-        "surname" => "Edit Name",
-        "email" => "email@email.com",
-        "birthday" => "1.1.2001",
-        "personal_identification_number" => "99",
-        "address" => "Street 24, City"
+        "surname" => "Sutton",
+        "email" => "sutton@a.edu",
+        "birthday" => "12.11.2020",
+        "personal_identification_number" => "421",
+        "address" => "5776 Nisi Road, Gorlitz 38197"
     ),
     "portalData" => array(
         "USER_licence" => array(
             array(
-                "USER_licence::product_name" => "product01",
-                "USER_licence::key" => "key01",
-                "USER_licence::version" => "ver01",
-                "USER_licence::date_of_expiration" => "1.1.2024"
+                "USER_licence::product_name" => "Adobe Photoshop Elements",
+                "USER_licence::key" => "VK7JG-NPHTM-C97JM-9MPGT-3V66T",
+                "USER_licence::version" => "2019 MP ENG BOX",
+                "USER_licence::date_of_expiration" => "02.08.2024"
             ),
             array(
-                "USER_licence::product_name" => "product02",
-                "USER_licence::key" => "key02",
-                "USER_licence::version" => "ver02",
-                "USER_licence::date_of_expiration" => "2.2.2024"
+                "USER_licence::product_name" => "Microsoft Office 365",
+                "USER_licence::key" => "KTNPV-KTRK4-3RRR8-39X6W-W44T3",
+                "USER_licence::version" => "Business Premium OLP",
+                "USER_licence::date_of_expiration" => "06.04.2021"
             )
         )
     )
@@ -38,36 +38,30 @@ $response = $fm->createRecord($newRecord);
 // This is ID the record that was made and this record will be edited
 $id = $response["response"]["recordId"];
 
-// Setting up the optional parameters
-// This parameters will be edited - surname, email, personal identification number, product name and key for first row, version and date of expiration for second row
+// Setting parameters for editing - surname, email, personal identification number, product key for first row, version and date of expiration for second row will be edited
 $editRecord = array(
     "fieldData" => array(
-        "surname" => "Name was edited",
-        "email" => "emailwasedited@email.com",
-        "personal_identification_number" => "1",
+        "surname" => "Sutton G.",
+        "email" => "sutton.gabriel@a.edu",
+        "personal_identification_number" => "111",
     ),
     "portalData" => array(
         "USER_licence" => array(
             array(
-                "USER_licence::product_name" => "edited - product01",
-                "USER_licence::key" => "edited - key01",
+                "USER_licence::key" => "VK7JG-NPHTM",
             ),
             array(
-                "USER_licence::version" => "edited - ver02",
-                "USER_licence::date_of_expiration" => "9.9.2099"
+                "USER_licence::version" => "Business OLP",
+                "USER_licence::date_of_expiration" => "09.01.2023"
             )
         )
     ),
-    "modId" => 0,
-    "script" => "PHP_LOG_REQUEST",
-    "script.param" => "script.param",
-    "script.prerequest" => "PHP_LOG_REQUEST",
-    "script.prerequest.param" => "script.prerequest.param",
-    "script.presort" => "PHP_LOG_REQUEST",
-    "script.presort.param" => "script.presort.param"
+    //"modId" => ,
+    "script" => "Log request",
+    "script.param" => "Parameter from fmRESTor - edit record"
 );
 
-
+// Edit the record
 $response2 = $fm->editRecord($id, $editRecord);
 var_dump($response, $response2);
 exit();

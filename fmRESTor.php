@@ -2,6 +2,8 @@
 /**
  * Author: 24U s.r.o.
  */
+
+namespace fmRESTor;
 /**
  * Class fmRESTor
  */
@@ -35,6 +37,8 @@ class fmRESTor
     const LS_SUCCESS = "success";
     const LS_INFO = "info";
     const LS_WARNING = "warning";
+
+    const ERROR_RESPONSE_CODE = [400, 401, 403, 404, 405, 415, 500];
 
     /**
      * fmRESTor constructor.
@@ -130,8 +134,9 @@ class fmRESTor
     /**
      * Check if is set default timezone in PHP.ini
      */
-    private function setTimezone(){
-        if(ini_get('date.timezone') == ""){
+    private function setTimezone()
+    {
+        if (ini_get('date.timezone') == "") {
             ini_set('date.timezone', 'Europe/London');
         }
     }
@@ -168,40 +173,381 @@ class fmRESTor
         );
 
         $result = $this->callURL($request);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->destroySessionToken();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Logout was successfull",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Logout was not successfull",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Logout was successfull",
+                "data" => $response
+            ));
+
+            $this->destroySessionToken();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Logout was not successfull",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
+
+    }
+
+    /**
+     * @param string $scriptName
+     * @param array $scriptPrameters
+     * @return bool|mixed
+     */
+    public function runScript($scriptName, $scriptPrameters = null)
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to run a script",
+            "data" => $scriptPrameters
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $param = "";
+        if ($scriptPrameters !== null) {
+            $param = $this->convertParametersToString($scriptPrameters);
+        }
+        $request = array(
+            "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/layouts/" . rawurlencode($this->layout) . "/script/" . rawurlencode($scriptName) . "?" . $param,
+            "method" => "GET",
+            "headers" => array(
+                "Authorization: Bearer " . $this->token
+            )
+        );
+
+        $result = $this->callURL($request, $param);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Script was successfully called",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Script was not successfully called",
+                "data" => $response
+            ));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getDatabaseNames()
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to get metadata - database names"
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/vLatest/databases",
+            "method" => "GET",
+            "headers" => array(
+                "Authorization: Basic " . base64_encode($this->user . ":" . $this->password)
+            )
+        );
+
+        $result = $this->callURL($request);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Information about database names was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Information about database names was not successfully loaded",
+                "data" => $response
+            ));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getProductInformation()
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to get metadata - product information"
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/vLatest/productInfo",
+            "method" => "GET"
+        );
+
+        $result = $this->callURL($request);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Product Information was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Product Information was not successfully loaded",
+                "data" => $response
+            ));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getScriptNames()
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to get metadata - script names"
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/scripts",
+            "method" => "GET",
+            "headers" => array(
+                "Authorization: Bearer " . $this->token
+            )
+
+        );
+
+        $result = $this->callURL($request);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Information about script names was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Information about script names was not successfully loaded",
+                "data" => $response
+            ));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getLayoutNames()
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to get metadata - layout names"
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/layouts",
+            "method" => "GET",
+            "headers" => array(
+                "Authorization: Bearer " . $this->token
+            )
+
+        );
+
+        $result = $this->callURL($request);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Information about layout names was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Information about layout names was not successfully loaded",
+                "data" => $response
+            ));
+        }
+
+        return $response;
+    }
+
+    /**
+     * @return bool|mixed
+     */
+    public function getLayoutMetadata()
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to get metadata - layout information"
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/layouts/" . rawurlencode($this->layout),
+            "method" => "GET",
+            "headers" => array(
+                "Authorization: Bearer " . $this->token
+            )
+
+        );
+
+        $result = $this->callURL($request);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Information about layout was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Information about layout was not successfully loaded",
+                "data" => $response
+            ));
+        }
+
+        return $response;
     }
 
     /**
@@ -238,40 +584,31 @@ class fmRESTor
 
         $param = $this->convertParametersToJson($parameters);
         $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Record was successfully created",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Record was not successfully created",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Record was successfully created",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Record was not successfully created",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -279,7 +616,7 @@ class fmRESTor
      * @param array $parameters
      * @return bool|mixed
      */
-    public function deleteRecord($id, $parameters)
+    public function deleteRecord($id, $parameters = null)
     {
         $this->setLogRowNumber();
 
@@ -297,7 +634,10 @@ class fmRESTor
             }
         }
 
-        $param = $this->convertParametersToString($parameters);
+        $param = "";
+        if ($parameters !== null) {
+            $param = $this->convertParametersToString($parameters);
+        }
         $request = array(
             "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/layouts/" . rawurlencode($this->layout) . "/records/" . $id . "?" . $param,
             "method" => "DELETE",
@@ -307,40 +647,97 @@ class fmRESTor
         );
 
         $result = $this->callURL($request);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Record was successfully deleted",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Record was not successfully deleted",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Record was successfully deleted",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Record was not successfully deleted",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
+    }
+
+    /**
+     * @param integer $id
+     * @param array $parameters
+     * @return bool|mixed
+     */
+    public function duplicateRecord($id, $parameters = null)
+    {
+        $this->setLogRowNumber();
+
+        $this->log(array(
+            "line" => __LINE__,
+            "method" => __METHOD__,
+            "type" => self::LS_INFO,
+            "message" => "Attempt to edit a record",
+            "data" => $parameters
+        ));
+
+        if ($this->isLogged() === false) {
+            $login = $this->login();
+            if ($login !== true) {
+                return $login;
+            }
+        }
+
+        $request = array(
+            "url" => "/fmi/data/v1/databases/" . rawurlencode($this->db) . "/layouts/" . rawurlencode($this->layout) . "/records/" . $id,
+            "method" => "POST",
+            "headers" => array(
+                "Content-Type: application/json",
+                "Authorization: Bearer " . $this->token
+            )
+        );
+
+        $param = null;
+        if ($parameters !== null) {
+            $param = $this->convertParametersToJson($parameters);
+        }
+
+        $result = $this->callURL($request, $param);
+        $response = $result["result"];
+
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Record was successfully edited",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_ERROR,
+                "message" => "Record was not successfully edited",
+                "data" => $response
+            ));
+        }
+
+        return $response;
     }
 
     /**
@@ -378,39 +775,31 @@ class fmRESTor
 
         $param = $this->convertParametersToJson($parameters);
         $result = $this->callURL($request, $param);
-        $response = $result["response"];
-        $message = $result["messages"][0]["message"];
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Record was successfully edited",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Record was not successfully edited",
-                    "data" => $message
-                ));
-            }
-        } else {
+        try {
+            $this->isResultError($result);
+
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Record was successfully edited",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Record was not successfully edited",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -450,40 +839,31 @@ class fmRESTor
         );
 
         $result = $this->callURL($request);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Record was successfully loaded",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Record was not successfully loaded",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Record was successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Record was not successfully loaded",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -523,40 +903,31 @@ class fmRESTor
         );
 
         $result = $this->callURL($request);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Records were successfully loaded",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Records were not successfully loaded",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Records were successfully loaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Records were not successfully loaded",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -586,7 +957,7 @@ class fmRESTor
         }
 
         $param = array(
-            "upload" => new CURLFile($file["tmp_name"], $file["type"], $file["name"])
+            "upload" => new \CURLFile($file["tmp_name"], $file["type"], $file["name"])
         );
 
         $request = array(
@@ -599,40 +970,31 @@ class fmRESTor
         );
 
         $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "File was successfully uploaded",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "File was not successfully uploaded",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "File was successfully uploaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "File was not successfully uploaded",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -666,7 +1028,7 @@ class fmRESTor
         }
 
         $param = array(
-            "upload" => new CURLFile($path, $mime, $filename)
+            "upload" => new \CURLFile($path, $mime, $filename)
         );
 
         $request = array(
@@ -679,39 +1041,31 @@ class fmRESTor
         );
 
         $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "File was successfully uploaded",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "File was not successfully uploaded",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "File was successfully uploaded",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "File was not successfully uploaded",
-                "data" => $result
+                "data" => $response
             ));
         }
-        return $result;
+
+        return $response;
     }
 
     /**
@@ -748,40 +1102,31 @@ class fmRESTor
 
         $param = $this->convertParametersToJson($parameters);
         $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Records was successfully found",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Records was not found",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Records was successfully found",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Records was not found",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -818,40 +1163,31 @@ class fmRESTor
 
         $param = $this->convertParametersToJson($parameters);
         $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->extendTokenExpiration();
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Global fields was successfully set",
-                    "data" => $response
-                ));
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Global fields was not successfully set",
-                    "data" => $message
-                ));
-            }
-        } else {
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Global fields was successfully set",
+                "data" => $response
+            ));
+
+            $this->extendTokenExpiration();
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Global fields was not successfully set",
-                "data" => $result
+                "data" => $response
             ));
         }
 
-        return $result;
+        return $response;
     }
 
     /**
@@ -919,7 +1255,6 @@ class fmRESTor
             "message" => "cURL request sending"
         ));
 
-
         $headers = (isset($requestSettings["headers"]) ? $requestSettings["headers"] : null);
         $method = $requestSettings["method"];
         $url = $requestSettings["url"];
@@ -961,17 +1296,22 @@ class fmRESTor
         $errors = curl_error($ch);
 
         if (!empty($errors)) {
-            return $errors;
+            return [
+                "status" => curl_getinfo($ch),
+                "result" => $errors
+            ];
         } else {
-            $response = json_decode($result, true);
-
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_INFO,
                 "message" => "cURL request sent"
             ));
-            return $response;
+
+            return [
+                "status" => curl_getinfo($ch),
+                "result" => json_decode($result, true)
+            ];
         }
     }
 
@@ -1005,44 +1345,35 @@ class fmRESTor
             $param = $this->convertParametersToJson($prepareParam);
         }
 
-        $result = $this->callURL($request,$param);
+        $result = $this->callURL($request, $param);
+        $response = $result["result"];
 
-        if (is_array($result)) {
-            $response = $result["response"];
-            $message = $result["messages"][0]["message"];
+        try {
+            $this->isResultError($result);
 
-            if ($this->verificationResult($message)) {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_SUCCESS,
-                    "message" => "Token was sucessfully created",
-                    "data" => $result
-                ));
+            $this->log(array(
+                "line" => __LINE__,
+                "method" => __METHOD__,
+                "type" => self::LS_SUCCESS,
+                "message" => "Token was sucessfully created",
+                "data" => $response
+            ));
 
-                $this->setToken($response["token"]);
-                $this->extendTokenExpiration();
+            $this->setToken($response["response"]["token"]);
+            $this->extendTokenExpiration();
 
-                return true;
-            } else {
-                $this->log(array(
-                    "line" => __LINE__,
-                    "method" => __METHOD__,
-                    "type" => self::LS_ERROR,
-                    "message" => "Token was not sucessfully created",
-                    "data" => $message
-                ));
-            }
-        } else {
+            return true;
+
+        } catch (\Exception $e) {
             $this->log(array(
                 "line" => __LINE__,
                 "method" => __METHOD__,
                 "type" => self::LS_ERROR,
                 "message" => "Token was not sucessfully created",
-                "data" => $result
+                "data" => $response
             ));
+            return $response;
         }
-        return $result;
     }
 
     /**
@@ -1060,8 +1391,8 @@ class fmRESTor
         if (isset($_SESSION[$this->sessionName]["token"]) && isset($_SESSION[$this->sessionName]["tokenCreated"])) {
             $appSession = $_SESSION[$this->sessionName];
 
-            $currentTime = new DateTime();
-            $tokenExpire = DateTime::createFromFormat("Y-m-d H:i:s", $appSession["tokenCreated"]);
+            $currentTime = new \DateTime();
+            $tokenExpire = \DateTime::createFromFormat("Y-m-d H:i:s", $appSession["tokenCreated"]);
             if ($tokenExpire === false) {
                 return false;
             }
@@ -1098,7 +1429,7 @@ class fmRESTor
             "message" => "Token expiration time extending"
         ));
 
-        $currentTime = new DateTime();
+        $currentTime = new \DateTime();
         $tokenExpire = $currentTime->modify("+" . $this->tokenExpireTime . "minutes");
         $_SESSION[$this->sessionName]["tokenCreated"] = $tokenExpire->format("Y-m-d H:i:s");
     }
@@ -1204,17 +1535,17 @@ class fmRESTor
         exit();
     }
 
-    /**
-     * @param string $message
-     * @return bool
-     */
-    private function verificationResult($message)
+    // TODO comment
+    private function isResultError($result)
     {
-        $lowerMessage = strtolower($message);
-        if ($lowerMessage === "ok") {
-            return true;
-        } else {
-            return false;
+        if (isset($result["status"]["http_code"]) && in_array($result["status"]["http_code"], self::ERROR_RESPONSE_CODE)) {
+            $errorCode = $result["result"]["messages"][0]["code"];
+            if ($errorCode == 1630) {
+                // CAUGHT ERROR - IF USER CALL UNSUPPORTED FUNCTION FOR SELECTED FILEMAKER
+                $this->response(-107);
+            } else {
+                throw new \Exception(json_encode($result["result"]), $result["status"]["http_code"]);
+            }
         }
     }
 }

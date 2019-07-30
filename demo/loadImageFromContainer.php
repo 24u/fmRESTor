@@ -1,5 +1,7 @@
 <?php
+
 // Get record with all optional parameters
+use fmRESTor\fmRESTor;
 session_start();
 require_once dirname(__DIR__) . '/fmRESTor.php';
 

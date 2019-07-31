@@ -2,7 +2,7 @@
 
 use fmRESTor\fmRESTor;
 session_start();
-require_once dirname(__DIR__) . '/fmRESTor.php';
+require_once dirname(__DIR__) . '/src/fmRESTor.php';
 
 // Setting the external source
 $fmExternalSource = array(

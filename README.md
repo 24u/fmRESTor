@@ -27,17 +27,40 @@ Requirements
 * PHP cURL
 * FileMaker Server 17 or 18
 
-Usage
+Usage (with use composer)
+-
+
+
+Install the latest version with:
+
+~~~
+composer require fmrestor/fmrestor
+~~~
+
+Usage:
+
+~~~php
+session_start();
+
+require __DIR__ . "/vendor/autoload.php";
+
+use fmRESTor\fmRESTor;
+
+$fm = new fmRESTor($host, $database, $layout, $user, $password, $options, $fmExternalSource);
+~~~
+
+Usage (without use composer)
 -
 
 
 Include downloaded library file to your project and create new class instance. 
 
 ~~~php
-use fmRESTor\fmRESTor;
-
 session_start();
-require_once __DIR__ . '/fmRESTor.php';
+
+require_once __DIR__ . '/src/fmRESTor.php';
+
+use fmRESTor\fmRESTor;
 
 $fm = new fmRESTor($host, $database, $layout, $user, $password, $options, $fmExternalSource);
 ~~~
@@ -71,10 +94,9 @@ allowInsecure | boolean | optional | false | Valid SSL certificate required unle
 ~~~php
 session_start();
 
+require_once __DIR__ . '/src/fmRESTor.php';
+
 use fmRESTor\fmRESTor;
-
-require_once __DIR__ . '/fmRESTor.php';
-
 
 $options = array(
 	"logType" => "all",

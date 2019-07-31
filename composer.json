@@ -1,7 +1,30 @@
 {
-  "name": "24U/fmRESTor",
+  "name": "fmrestor/fmrestor",
+  "type": "library",
   "description": "fmRESTor is an object-based PHP library developed to seamlessly interact with databases and custom apps hosted on a FileMaker Server via the new powerful FileMaker Data API from within a PHP code.",
+  "keywords": [
+    "filemaker-api",
+    "filemaker",
+    "php",
+    "filemaker17",
+    "filemaker-17",
+    "api",
+    "filemaker-dataapi",
+    "filemaker-databases",
+    "filemaker18",
+    "filemaker-18",
+    "filemaker-18-api",
+    "filemaker-17-api"
+  ],
+  "homepage": "https://24usoftware.com/fmrestor",
+  "license": "LGPL-3.0",
   "require": {
-    "php": "^5.6"
+    "php": ">=5.6.0"
+  },
+  "autoload": {
+    "psr-0": {
+      "Monolog": "src"
+    }
   }
 }
+

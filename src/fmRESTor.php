@@ -1445,7 +1445,9 @@ class fmRESTor
 
     private function destroySessionToken()
     {
-        unset($_SESSION[$this->sessionName]);
+        if (isset($_SESSION[$this->sessionName])) {
+            unset($_SESSION[$this->sessionName]);
+        }
     }
 
     /**

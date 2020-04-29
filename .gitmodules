@@ -1,0 +1,6 @@
+[submodule "fmRESTor.js"]
+	path = fmRESTor.js
+	url = https://filip24u@github.com/24u/fmRESTor.js.git
+[submodule "fmRESTor.php"]
+	path = fmRESTor.php
+	url = https://filip24u@github.com/24u/fmRESTor.php.git

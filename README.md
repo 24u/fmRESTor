@@ -1,4 +1,4 @@
-Leverage the FileMaker® 17, 18 & 19 Data API with ease!
+Leverage the FileMaker® 17, 18, 19 & 20 Data API with ease!
 ----
 
 fmRESTor an object-based library developed to seamlessly interact with databases and custom apps hosted on a FileMaker Server via the new powerful FileMaker Data API from within a PHP or JavaScript code. Forget about learning FileMaker Data API in detail, just create a new object, passing it necessary parameters to connect to the database, and use our easy to understand methods to access or modify your data. fmRESTor will take care of authentication, exceptions, and even session preservation in order for your code to be a well-behaving client for the FileMaker Data API without you having to worry about these technical details.
